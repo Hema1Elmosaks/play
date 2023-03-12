@@ -1,0 +1,326 @@
+//Python Play is an open-source code library for the Python programming language that makes it as easy as possible to start making games. Here's the code to make a simple game using Play:
+import play
+
+cat = play.new_text('=^.^=', font_size=70)
+
+@play.repeat_forever
+async def move_cat():
+    cat.x = play.random_number(-200, 200)
+    cat.y = play.random_number(-200, 200)
+    cat.color = play.random_color()
+    
+    cat.show()
+
+    await play.timer(seconds=0.4)
+
+    cat.hide()
+
+    await play.timer(seconds=0.4)
+
+@cat.when_clicked
+def win_function():
+    cat.show()
+    cat.words = 'You won!'
+
+play.start_program()
+
+//Run the following command in your terminal:
+pip install replit-play
+
+
+//All Python Play programs start with import play and end with play.start_program(), like this:
+import play # this is the first line in the program
+
+
+
+play.start_program() # this is the last line in the program
+
+//play.new_box()
+box = play.new_box(
+        color='black',
+        x=0,
+        y=0,
+        width=100,
+        height=200,
+        border_color="light blue",
+        border_width=10
+    )
+
+//play.new_image()
+character = play.new_image(
+        image='character.png', 
+        x=0, 
+        y=0, 
+        angle=0, 
+        size=100, 
+        transparency=100
+    )
+
+//play.new_text()
+greeting = play.new_text(
+        words='hi there', 
+        x=0, 
+        y=0, 
+        angle=0, 
+        font=None, 
+        font_size=50, 
+        color='black', 
+        transparency=100
+    )
+
+//play.new_circle()
+ball = play.new_circle(
+        color='black', 
+        x=0, 
+        y=0, 
+        radius=100, 
+        border_color="light blue", 
+        border_width=10, 
+        transparency=100
+    )
+
+//play.new_line()
+line = play.new_line(
+        color='black', 
+        x=0, 
+        y=0, 
+        length=100, 
+        angle=0, 
+        thickness=1, 
+        x1=None, 
+        y1=None
+    )
+
+//You can change the background color with the play.set_backdrop() command:
+play.set_backdrop('light blue')
+
+//There are lots of named colors to choose from. Additionally, if you want to set colors by RGB (Red Green Blue) values, you can do that like this:
+# Sets the background to white. Each number can go from 0 to 255
+play.set_backdrop( (255, 255, 255) )
+
+//To make things move around, you can start by using @play.repeat_forever, like this:
+cat = play.new_text('=^.^=')
+
+@play.repeat_forever
+def do():
+
+    cat.turn(10)  
+
+//To make some code run just at the beginning of your project, use @play.when_program_starts, like this:
+cat = play.new_text('=^.^=')
+
+@play.when_program_starts
+def do():
+
+    cat.turn(180)  
+
+//To run code after a waiting period, you can use the await play.timer() command like this:
+cat = play.new_text('=^.^=')
+
+@play.when_program_starts
+async def do():
+
+    cat.turn(180)  
+    await play.timer(seconds=2)
+    cat.turn(180)  
+
+//To smoothly animate a character a certain number of times, you can use play.repeat() with await play.animate(), like this:
+cat = play.new_text('=^.^=')
+
+@play.when_program_starts
+async def do():
+    for count in play.repeat(180):
+        cat.turn(1)
+        await play.animate()
+
+//These properties can changed to do the same things as the sprite commands above. For example,
+sprite.go_to(other_sprite)
+
+# the line above is the same as the two lines below
+
+sprite.x = other_sprite.x
+sprite.y = other_sprite.y
+
+//You can change the properties to animate the sprites. The code below makes the cat turn around.
+cat = play.new_text('=^.^=')
+
+@play.repeat_forever
+def do():
+    cat.angle += 1
+    # the line above is the same as cat.turn(1)
+
+//Working with the mouse in Python Play is easy. Here's a simple program that points a sprite at the mouse:
+arrow = play.new_text('-->', font_size=100)
+
+@play.repeat_forever
+def do():
+    arrow.point_towards(play.mouse)
+
+//In the program below, when the face is clicked it changes for 1 second then turns back to normal:
+face = play.new_text('^.^', font_size=100)
+
+@face.when_clicked
+async def do():
+    face.words = '*o*'
+    await play.timer(seconds=1)
+    face.words = '^.^'
+
+//If you wanted to run the same code when multiple sprites are clicked, you can use @play.when_sprite_clicked():
+face1 = play.new_text('^.^', x=-100, font_size=100)
+face2 = play.new_text('^_^', x=100, font_size=100)
+
+@play.when_sprite_clicked(face1, face2) # takes as many sprites as you want
+async def do(sprite):
+    starting_words = sprite.words
+    sprite.words = '*o*'
+    await play.timer(seconds=1)
+    sprite.words = starting_words
+
+//In the code below, when a click is detected, the text will move to the click location and the coordinates will be shown:
+text = play.new_text('0, 0')
+
+@play.mouse.when_clicked
+def do():
+    text.words = f'{play.mouse.x}, {play.mouse.y}'
+    text.go_to(play.mouse)
+
+//In the code below, the cat can be dragged around when it's clicked by the mouse:
+cat = play.new_text('=^.^= drag me!')
+cat.is_being_dragged = False
+
+@cat.when_clicked
+def do():
+    cat.is_being_dragged = True
+
+@play.mouse.when_click_released
+def do():
+    cat.is_being_dragged = False
+
+@play.repeat_forever
+def do():
+    if cat.is_being_dragged:
+        cat.go_to(play.mouse)
+
+//In the code below, pressing the arrow keys or w/a/s/d will make the cat go in the desired direction.
+cat = play.new_text('=^.^=')
+
+@play.repeat_forever
+def do():
+    if play.key_is_pressed('up', 'w'):
+        cat.y += 15
+    if play.key_is_pressed('down', 's'):
+        cat.y -= 15
+
+    if play.key_is_pressed('right', 'd'):
+        cat.x += 15
+    if play.key_is_pressed('left', 'a'):
+        cat.x -= 15
+
+//In the code below, pressing the space key will change the cat's face, and pressing the enter key will change it to a different face.
+cat = play.new_text('=^.^=')
+
+@play.when_key_pressed('space', 'enter') # if either the space key or enter key are pressed...
+def do(key):
+    if key == 'enter':
+        cat.words = '=-.-='
+    if key == 'space':
+        cat.words = '=*_*='
+
+//In the code below, any key you press will be displayed on the screen:
+text = play.new_text('')
+
+@play.when_any_key_pressed
+def do(key):
+    text.words = f'{key} pressed!'
+
+//In the code below, text will appear on screen only if the up arrow is pressed.
+text = play.new_text('')
+
+@play.when_key_released('up')
+async def do(key):
+    text.words = 'up arrow released!'
+    await play.timer(seconds=1)
+    text.words = ''
+
+//In the code below, the name of the most recently released key will show up on screen.
+text = play.new_text('')
+
+@play.when_any_key_pressed
+def do(key):
+    text.words = f'{key} key released!''
+
+//To turn a sprite into a physics object, use the start_physics() command:
+sprite.start_physics(can_move=True, stable=False, x_speed=0, y_speed=0, obeys_gravity=True, bounciness=1, mass=10, friction=0.1)
+
+//To get a sprite to stop moving around and colliding, you can call sprite.stop_physics:
+sprite.stop_physics()
+
+//To set how much gravity there is for sprites that have had start_physics() called on them, use the play.set_gravity() command:
+play.set_gravity(vertical=-100, horizontal=None)
+
+//If two whole numbers are given, play.random_number() will give a whole number back:
+play.random_number(lowest=0, highest=100)
+
+# example return value: 42
+
+//If non-whole numbers are given, non-whole numbers are given back:
+play.random_number(0, 1.0)
+# example return value: 0.84
+
+//Returns a random RGB color, including white and black.
+play.random_color()
+# example return value: (201, 17, 142)
+
+//Returns a random position on the screen. A position object has an x and y component.
+text = play.text('WOO')
+@play.repeat_forever
+def do():
+    text.go_to(play.random_position())
+
+    # the above is equivalent to:
+    position = play.random_position()
+    text.x = position.x
+    text.y = position.y
+
+//play.repeat() is the same as Python's built-in range function, except it starts at 1. 'Repeat' is just a friendlier and more descriptive name than 'range'.
+list(play.repeat(10))
+# return value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+//When used in a loop, this command will animate any sprite changes that happen.
+cat = play.new_text('=^.^=')
+
+@play.when_program_starts
+async def do():
+    for count in play.repeat(360):
+        cat.turn(1)
+        await play.animate()
+
+//Using async functions means we can use the await play.timer() and await play.animate() functions, which makes some code a lot simpler and appear to run in-parallel, which new programmers find intuitive.
+import play
+
+cat = play.new_text('=^.^=')
+
+# this code block uses async so it can use the 'await play.timer()' function
+@play.repeat_forever
+async def change_bg():
+    play.set_backdrop('pink')
+    await play.timer(seconds=1)
+
+    play.set_backdrop('purple')
+    await play.timer(seconds=1)
+
+    play.set_backdrop('light blue')
+    await play.timer(seconds=1)
+
+# this code block doesn't need async because it doesn't have `await play.timer()` or `await play.animate()`
+@play.repeat_forever
+def do():
+    cat.turn(1)
+
+play.start_program()
+
+//The async keyword isn't necessary to write unless you want to use await functions. If you try to use an await command inside a non-async function, Python will show you an error like this:
+  File "example.py", line 31
+    await play.timer(seconds=1)
+    ^
+SyntaxError: 'await' outside async function
